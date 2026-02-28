@@ -42,63 +42,79 @@ export function getTimezoneString() {
   }
 }
 
+const IPv4_REGEX = /^\d+\.\d+\.\d+\.\d+$/;
+const IPv6_REGEX = /^[0-9a-fA-F:]+$/;
+
+function isIPv4(ip) {
+  return IPv4_REGEX.test(ip);
+}
+function isIPv6(ip) {
+  return IPv6_REGEX.test(ip) && !isIPv4(ip) && ip.length > 0;
+}
+function isLoopback(ip) {
+  if (ip === '::1' || ip.startsWith('127.') || ip === '0.0.0.0') return true;
+  if (ip.toLowerCase() === '::1') return true;
+  return false;
+}
+
 /**
- * Get all local IPv4 addresses via WebRTC (best-effort). May return multiple (e.g. ethernet + wifi).
- * Browser does not indicate which IP is ethernet vs wifi.
+ * Get all local IPv4 and IPv6 addresses via WebRTC (best-effort).
+ * ICE candidate format: "candidate:... priority ADDRESS port typ ..." — address is 5th token.
  */
 export function getLocalIPs() {
   return new Promise((resolve) => {
     const seen = new Set();
-    const ips = [];
+    const ipv4 = [];
+    const ipv6 = [];
     const pc = new RTCPeerConnection({ iceServers: [{ urls: 'stun:stun.l.google.com:19302' }] });
     const done = () => {
       pc.close();
-      resolve(ips);
+      resolve({ ipv4, ipv6 });
     };
     pc.createDataChannel('');
     pc.createOffer().then((offer) => pc.setLocalDescription(offer));
     pc.onicecandidate = (e) => {
       const cand = e.candidate?.candidate;
       if (!cand) return;
-      const m = cand.match(/^candidate:\d+ \d+ udp \d+ (\d+\.\d+\.\d+\.\d+)/);
-      if (m && /^\d+\.\d+\.\d+\.\d+$/.test(m[1])) {
-        const ip = m[1];
-        if (ip !== '0.0.0.0' && !ip.startsWith('127.') && !seen.has(ip)) {
-          seen.add(ip);
-          ips.push(ip);
-        }
-      }
+      const parts = cand.trim().split(/\s+/);
+      const address = parts[4];
+      if (!address || isLoopback(address) || seen.has(address)) return;
+      seen.add(address);
+      if (isIPv4(address)) ipv4.push(address);
+      else if (isIPv6(address)) ipv6.push(address);
     };
     setTimeout(done, 3000);
   });
 }
 
 /**
- * Get local ethernet IP and local wifi IP for display.
- * When multiple IPs are found, first is shown as Ethernet and second as Wi‑Fi (browser cannot distinguish).
- * When one IP is found, it is shown under the current connection type (ethernet or wifi) when known.
+ * Get local ethernet IP, wifi IP, and a single local LAN IP (IPv4 or IPv6) for display.
+ * Local LAN IP shows the machine's primary local address (prefer IPv4, else IPv6).
  */
 export async function getLocalEthernetAndWifiIPs() {
-  const ips = await getLocalIPs();
+  const { ipv4, ipv6 } = await getLocalIPs();
+  const all = [...ipv4, ...ipv6];
+  const localLANIP = ipv4[0] ?? ipv6[0] ?? null;
+
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const type = conn && conn.type !== undefined ? String(conn.type).toLowerCase() : null;
 
   let ethernetIP = null;
   let wifiIP = null;
 
-  if (ips.length >= 2) {
-    ethernetIP = ips[0];
-    wifiIP = ips[1];
-  } else if (ips.length === 1) {
-    if (type === 'ethernet' || type === 'wired') ethernetIP = ips[0];
-    else if (type === 'wifi' || type === 'wifi-direct') wifiIP = ips[0];
+  if (all.length >= 2) {
+    ethernetIP = all[0];
+    wifiIP = all[1];
+  } else if (all.length === 1) {
+    if (type === 'ethernet' || type === 'wired') ethernetIP = all[0];
+    else if (type === 'wifi' || type === 'wifi-direct') wifiIP = all[0];
     else {
-      ethernetIP = ips[0];
+      ethernetIP = all[0];
       wifiIP = null;
     }
   }
 
-  return { ethernetIP, wifiIP };
+  return { ethernetIP, wifiIP, localLANIP };
 }
 
 /**
@@ -181,34 +197,3 @@ export function getConnectionType() {
   return 'Unknown';
 }
 
-const REACHABILITY_TIMEOUT_MS = 8000;
-const REACHABILITY_SITES = [
-  { label: 'google.com.au', url: 'https://www.google.com.au/' },
-  { label: 'microsoft.com.au', url: 'https://www.microsoft.com/en-au' },
-  { label: 'abc.net.au', url: 'https://www.abc.net.au/' },
-];
-
-async function checkOneReachable(site) {
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), REACHABILITY_TIMEOUT_MS);
-  try {
-    await fetch(site.url + (site.url.includes('?') ? '&' : '?') + 't=' + Date.now(), {
-      mode: 'no-cors',
-      cache: 'no-store',
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-    return { label: site.label, reachable: true };
-  } catch (_) {
-    clearTimeout(timeout);
-    return { label: site.label, reachable: false };
-  }
-}
-
-/**
- * Check whether google.com.au, microsoft.com.au and abc.net.au can be reached.
- */
-export async function checkSiteReachability() {
-  const results = await Promise.all(REACHABILITY_SITES.map(checkOneReachable));
-  return results;
-}

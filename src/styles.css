@@ -206,54 +206,13 @@ body {
   word-break: break-all;
 }
 
-/* Site reachability card */
-.reachability-card {
-  background: var(--surface);
-  border: 1px solid var(--surface-border);
-  border-radius: var(--radius);
-  padding: 1.25rem 1.5rem;
-  backdrop-filter: blur(12px);
-}
-
-.reachability-title,
 .chart-title,
 .diagnostics-title {
   text-align: left;
-}
-
-.reachability-title {
   font-size: 1rem;
   font-weight: 500;
   margin: 0 0 0.75rem;
   color: var(--text-muted);
-}
-
-.reachability-list {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  font-size: 0.9rem;
-}
-
-.reachability-item {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  margin-bottom: 0.35rem;
-}
-
-.reachability-item:last-child {
-  margin-bottom: 0;
-}
-
-.reachability-ok {
-  color: var(--accent-green);
-  font-weight: 500;
-}
-
-.reachability-fail {
-  color: var(--accent-red);
-  font-weight: 500;
 }
 
 /* Status card — glass panel + status light */

@@ -11,7 +11,6 @@ import {
   getLocalEthernetAndWifiIPs,
   getPublicIPAndInfo,
   getTimezoneString,
-  checkSiteReachability,
 } from './dashboard.js';
 
 const statusLight = document.getElementById('status-light');
@@ -26,7 +25,6 @@ const dashboardLocalLanIP = document.getElementById('dashboard-local-lan-ip');
 const dashboardLocalWifiIP = document.getElementById('dashboard-local-wifi-ip');
 const dashboardPublicIP = document.getElementById('dashboard-public-ip');
 const dashboardDnsIP = document.getElementById('dashboard-dns-ip');
-const reachabilityList = document.getElementById('reachability-list');
 
 let lastConnectedAt = null;
 let lastMonitorUpdateAt = 0;
@@ -113,9 +111,9 @@ function setAllIPsToDash() {
 }
 
 async function refreshDashboardIPs() {
-  const { ethernetIP, wifiIP } = await getLocalEthernetAndWifiIPs();
+  const { ethernetIP, wifiIP, localLANIP } = await getLocalEthernetAndWifiIPs();
   const info = await getPublicIPAndInfo();
-  if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = ethernetIP || wifiIP || '—';
+  if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = localLANIP || '—';
   if (dashboardLocalWifiIP) dashboardLocalWifiIP.textContent = wifiIP || '—';
   if (dashboardPublicIP) dashboardPublicIP.textContent = info.publicIP || '—';
   if (dashboardDnsIP) dashboardDnsIP.textContent = info.resolverIP || '—';
@@ -146,20 +144,17 @@ export function bindMonitor(monitor) {
     updateChart(history || []);
     if (status === STATUS.DISCONNECTED) {
       setAllIPsToDash();
-      setReachabilityAllUnreachable();
       showDiagnostics(true);
       if (diagnosticsBreakdown) diagnosticsBreakdown.textContent = 'No connection.';
       renderTips(DEFAULT_DISCONNECTED_TIPS);
     } else if (status === STATUS.CONNECTED) {
       showDiagnostics(false);
       refreshDashboardIPs();
-      updateReachability();
     }
   });
 
   monitor.on('outageDetected', () => {
     lastMonitorUpdateAt = Date.now();
-    setReachabilityAllUnreachable();
     runAndShowDiagnostics();
   });
 
@@ -176,49 +171,13 @@ async function initDashboard() {
   const tz = getTimezoneString();
   if (dashboardTime && tz) dashboardTime.setAttribute('title', 'Timezone: ' + tz);
 
-  const { ethernetIP, wifiIP } = await getLocalEthernetAndWifiIPs();
-  if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = ethernetIP || wifiIP || '—';
+  const { ethernetIP, wifiIP, localLANIP } = await getLocalEthernetAndWifiIPs();
+  if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = localLANIP || '—';
   if (dashboardLocalWifiIP) dashboardLocalWifiIP.textContent = wifiIP || '—';
 
   const info = await getPublicIPAndInfo();
   if (dashboardPublicIP) dashboardPublicIP.textContent = info.publicIP || '—';
   if (dashboardDnsIP) dashboardDnsIP.textContent = info.resolverIP || '—';
-
-  updateReachability();
-}
-
-const REACHABILITY_SITE_LABELS = ['google.com.au', 'microsoft.com.au', 'abc.net.au'];
-
-function setReachabilityAllUnreachable() {
-  if (!reachabilityList) return;
-  reachabilityList.innerHTML = '';
-  REACHABILITY_SITE_LABELS.forEach((label) => {
-    const li = document.createElement('li');
-    li.className = 'reachability-item';
-    const status = document.createElement('span');
-    status.className = 'reachability-fail';
-    status.textContent = 'Not reachable';
-    li.appendChild(document.createTextNode(label + ' — '));
-    li.appendChild(status);
-    reachabilityList.appendChild(li);
-  });
-}
-
-async function updateReachability() {
-  if (!reachabilityList) return;
-  reachabilityList.innerHTML = '';
-  const results = await checkSiteReachability();
-  reachabilityList.innerHTML = '';
-  results.forEach(({ label, reachable }) => {
-    const li = document.createElement('li');
-    li.className = 'reachability-item';
-    const status = document.createElement('span');
-    status.className = reachable ? 'reachability-ok' : 'reachability-fail';
-    status.textContent = reachable ? 'Reachable' : 'Not reachable';
-    li.appendChild(document.createTextNode(label + ' — '));
-    li.appendChild(status);
-    reachabilityList.appendChild(li);
-  });
 }
 
 const THEME_KEY = 'conntivity-theme';
