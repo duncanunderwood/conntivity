@@ -22,7 +22,6 @@ const diagnosticsBreakdown = document.getElementById('diagnostics-breakdown');
 const diagnosticsTips = document.getElementById('diagnostics-tips');
 const dashboardTime = document.getElementById('dashboard-time');
 const dashboardLocalLanIP = document.getElementById('dashboard-local-lan-ip');
-const dashboardLocalWifiIP = document.getElementById('dashboard-local-wifi-ip');
 const dashboardPublicIP = document.getElementById('dashboard-public-ip');
 const dashboardDnsIP = document.getElementById('dashboard-dns-ip');
 
@@ -105,16 +104,14 @@ const DEFAULT_DISCONNECTED_TIPS = [
 
 function setAllIPsToDash() {
   if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = '—';
-  if (dashboardLocalWifiIP) dashboardLocalWifiIP.textContent = '—';
   if (dashboardPublicIP) dashboardPublicIP.textContent = '—';
   if (dashboardDnsIP) dashboardDnsIP.textContent = '—';
 }
 
 async function refreshDashboardIPs() {
-  const { ethernetIP, wifiIP, localLANIP } = await getLocalEthernetAndWifiIPs();
+  const { localLANIP } = await getLocalEthernetAndWifiIPs();
   const info = await getPublicIPAndInfo();
   if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = localLANIP || '—';
-  if (dashboardLocalWifiIP) dashboardLocalWifiIP.textContent = wifiIP || '—';
   if (dashboardPublicIP) dashboardPublicIP.textContent = info.publicIP || '—';
   if (dashboardDnsIP) dashboardDnsIP.textContent = info.resolverIP || '—';
 }
@@ -171,9 +168,8 @@ async function initDashboard() {
   const tz = getTimezoneString();
   if (dashboardTime && tz) dashboardTime.setAttribute('title', 'Timezone: ' + tz);
 
-  const { ethernetIP, wifiIP, localLANIP } = await getLocalEthernetAndWifiIPs();
+  const { localLANIP } = await getLocalEthernetAndWifiIPs();
   if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = localLANIP || '—';
-  if (dashboardLocalWifiIP) dashboardLocalWifiIP.textContent = wifiIP || '—';
 
   const info = await getPublicIPAndInfo();
   if (dashboardPublicIP) dashboardPublicIP.textContent = info.publicIP || '—';
