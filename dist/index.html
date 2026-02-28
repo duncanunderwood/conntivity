@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conntivity — Network Monitor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+    <script type="module" crossorigin src="/assets/index-CpHwtJm-.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-BIy9KTWV.css">
+  </head>
+  <body>
+    <div id="app">
+      <header class="header">
+        <h1 class="title">Conntivity</h1>
+        <p class="subtitle">Network &amp; internet connection monitor</p>
+      </header>
+
+      <main class="main">
+        <section class="dashboard-card" aria-label="System and network info">
+          <h2 class="dashboard-title">Dashboard</h2>
+          <dl class="dashboard-grid">
+            <dt>Current time</dt>
+            <dd id="dashboard-time" class="dashboard-value" data-tz="">—</dd>
+            <dt>Local IP</dt>
+            <dd id="dashboard-local-ip" class="dashboard-value">—</dd>
+            <dt>Public IP</dt>
+            <dd id="dashboard-public-ip" class="dashboard-value">—</dd>
+            <dt>DNS / Resolver</dt>
+            <dd id="dashboard-dns" class="dashboard-value">—</dd>
+            <dt>Gateway</dt>
+            <dd id="dashboard-gateway" class="dashboard-value">—</dd>
+          </dl>
+        </section>
+
+        <section class="status-card" aria-live="polite" aria-atomic="true">
+          <div class="status-light-wrapper">
+            <div id="status-light" class="status-light status-unknown" role="status" aria-label="Connection status"></div>
+          </div>
+          <p id="status-text" class="status-text">Checking…</p>
+          <p id="latency-value" class="latency-value">— ms</p>
+          <p id="last-seen" class="last-seen">Last seen: —</p>
+        </section>
+
+        <section class="chart-card">
+          <h2 class="chart-title">Latency over time</h2>
+          <div id="chart-container" class="chart-container"></div>
+        </section>
+
+        <section id="diagnostics-section" class="diagnostics-card hidden" aria-live="polite" aria-label="Connection diagnostics">
+          <h2 class="diagnostics-title">Diagnostics</h2>
+          <div id="diagnostics-breakdown" class="diagnostics-breakdown"></div>
+          <h3 class="tips-title">Things to try</h3>
+          <ul id="diagnostics-tips" class="diagnostics-tips"></ul>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

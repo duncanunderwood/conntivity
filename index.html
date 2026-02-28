@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Conntivity — Network Monitor</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="/src/styles.css" />
+  </head>
+  <body data-theme="dark">
+    <div id="app">
+      <header class="header">
+        <div class="header-controls">
+          <label class="interval-label" for="interval-select">Check interval</label>
+          <select id="interval-select" class="interval-select" aria-label="Connectivity check interval">
+            <option value="1" selected>1 s</option>
+            <option value="5">5 s</option>
+            <option value="15">15 s</option>
+            <option value="30">30 s</option>
+            <option value="60">60 s</option>
+          </select>
+          <button type="button" id="refresh-btn" class="header-btn" aria-label="Refresh page" title="Refresh page">Refresh</button>
+          <button type="button" id="theme-toggle" class="theme-toggle" aria-label="Toggle dark or light mode" title="Toggle theme">Dark</button>
+        </div>
+        <h1 class="title">Conntivity</h1>
+        <p class="subtitle">Network &amp; internet connection monitor</p>
+      </header>
+
+      <main class="main">
+        <div class="top-row">
+          <section class="dashboard-card" aria-label="System and network info">
+            <dl class="dashboard-grid">
+              <dt>Current time</dt>
+              <dd id="dashboard-time" class="dashboard-value" data-tz="">—</dd>
+<dt>Local LAN IP</dt>
+            <dd id="dashboard-local-lan-ip" class="dashboard-value">—</dd>
+              <dt>Local Wi‑Fi IP</dt>
+              <dd id="dashboard-local-wifi-ip" class="dashboard-value">—</dd>
+              <dt>Public IP</dt>
+              <dd id="dashboard-public-ip" class="dashboard-value">—</dd>
+<dt>DNS IP</dt>
+            <dd id="dashboard-dns-ip" class="dashboard-value">—</dd>
+            </dl>
+          </section>
+          <section class="reachability-card" aria-label="Site reachability">
+            <h2 class="reachability-title">Site reachability</h2>
+            <ul id="reachability-list" class="reachability-list" aria-live="polite"></ul>
+          </section>
+        </div>
+
+        <section class="status-card" aria-live="polite" aria-atomic="true">
+          <div class="status-light-wrapper">
+            <div id="status-light" class="status-light status-unknown" role="status" aria-label="Connection status"></div>
+          </div>
+          <p id="status-text" class="status-text">Checking…</p>
+          <p id="latency-value" class="latency-value">— ms</p>
+          <p id="last-seen" class="last-seen">Last seen: —</p>
+        </section>
+
+        <section class="chart-card">
+          <h2 class="chart-title">Latency over time</h2>
+          <div id="chart-container" class="chart-container"></div>
+        </section>
+
+        <section id="diagnostics-section" class="diagnostics-card hidden" aria-live="polite" aria-label="Connection diagnostics">
+          <h2 class="diagnostics-title">Diagnostics</h2>
+          <div id="diagnostics-breakdown" class="diagnostics-breakdown"></div>
+          <h3 class="tips-title">Things to try</h3>
+          <ul id="diagnostics-tips" class="diagnostics-tips"></ul>
+        </section>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
