@@ -11,6 +11,7 @@ import {
   getLocalEthernetAndWifiIPs,
   getPublicIPAndInfo,
   getTimezoneString,
+  getTimezoneDisplayString,
 } from './dashboard.js';
 
 const statusLight = document.getElementById('status-light');
@@ -21,10 +22,10 @@ const diagnosticsSection = document.getElementById('diagnostics-section');
 const diagnosticsBreakdown = document.getElementById('diagnostics-breakdown');
 const diagnosticsTips = document.getElementById('diagnostics-tips');
 const dashboardTime = document.getElementById('dashboard-time');
+const dashboardTimezone = document.getElementById('dashboard-timezone');
 const dashboardLocalLanIP = document.getElementById('dashboard-local-lan-ip');
 const dashboardPublicIP = document.getElementById('dashboard-public-ip');
 const dashboardDns1 = document.getElementById('dashboard-dns1');
-const dashboardDns2 = document.getElementById('dashboard-dns2');
 
 let lastConnectedAt = null;
 let lastMonitorUpdateAt = 0;
@@ -107,7 +108,6 @@ function setAllIPsToDash() {
   if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = '—';
   if (dashboardPublicIP) dashboardPublicIP.textContent = '—';
   if (dashboardDns1) dashboardDns1.textContent = '—';
-  if (dashboardDns2) dashboardDns2.textContent = '—';
 }
 
 async function refreshDashboardIPs() {
@@ -116,7 +116,6 @@ async function refreshDashboardIPs() {
   if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = localLANIP || '—';
   if (dashboardPublicIP) dashboardPublicIP.textContent = info.publicIP || '—';
   if (dashboardDns1) dashboardDns1.textContent = info.dns1 || '—';
-  if (dashboardDns2) dashboardDns2.textContent = info.dns2 || '—';
 }
 
 async function runAndShowDiagnostics() {
@@ -170,6 +169,7 @@ async function initDashboard() {
   startClock(dashboardTime);
   const tz = getTimezoneString();
   if (dashboardTime && tz) dashboardTime.setAttribute('title', 'Timezone: ' + tz);
+  if (dashboardTimezone) dashboardTimezone.textContent = getTimezoneDisplayString() || '—';
 
   const { localLANIP } = await getLocalEthernetAndWifiIPs();
   if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = localLANIP || '—';
@@ -177,7 +177,6 @@ async function initDashboard() {
   const info = await getPublicIPAndInfo();
   if (dashboardPublicIP) dashboardPublicIP.textContent = info.publicIP || '—';
   if (dashboardDns1) dashboardDns1.textContent = info.dns1 || '—';
-  if (dashboardDns2) dashboardDns2.textContent = info.dns2 || '—';
 }
 
 const THEME_KEY = 'conntivity-theme';

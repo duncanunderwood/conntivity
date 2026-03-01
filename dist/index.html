@@ -7,8 +7,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
-    <script type="module" crossorigin src="/assets/index-tBQJsNcN.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-BKdHGoQL.css">
+    <script type="module" crossorigin src="/assets/index-A025rvHF.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-VjY_6HHC.css">
   </head>
   <body data-theme="dark">
     <div id="app">
@@ -34,14 +34,14 @@
             <dl class="dashboard-grid">
               <dt>Current time</dt>
               <dd id="dashboard-time" class="dashboard-value" data-tz="">—</dd>
+              <dt>Timezone</dt>
+              <dd id="dashboard-timezone" class="dashboard-value" title="Your device timezone (city / country)">—</dd>
               <dt>Local LAN IP</dt>
-              <dd id="dashboard-local-lan-ip" class="dashboard-value" title="This device's IP on the local network (LAN side of router)">—</dd>
+              <dd id="dashboard-local-lan-ip" class="dashboard-value" title="Device subnet address on the LAN (from router), e.g. 192.168.x.x, 172.16–31.x.x, or 10.x.x.x">—</dd>
               <dt>Public IP</dt>
               <dd id="dashboard-public-ip" class="dashboard-value" title="Your router's IP on the internet (WAN side)">—</dd>
               <dt>DNS 1</dt>
               <dd id="dashboard-dns1" class="dashboard-value" title="Primary DNS resolver your device is using">—</dd>
-              <dt>DNS 2</dt>
-              <dd id="dashboard-dns2" class="dashboard-value" title="Backup DNS resolver (when available)">—</dd>
             </dl>
           </section>
         </div>
@@ -70,6 +70,9 @@
       <footer class="app-footer">
         <p class="app-footer-copyright">© 2025 MyEvent Productions. All rights reserved.</p>
         <p class="app-footer-powered">Powered by <a href="https://myevent.io" target="_blank" rel="noopener noreferrer" class="app-footer-link">MyEvent Productions</a></p>
+        <p class="app-footer-support">
+          <a href="#" id="support-us-btn" class="support-us-btn" target="_blank" rel="noopener noreferrer" title="Support us via Stripe">Support us</a>
+        </p>
       </footer>
     </div>
   </body>

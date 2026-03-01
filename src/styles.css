@@ -409,6 +409,35 @@ body {
   text-decoration: underline;
 }
 
+.app-footer-support {
+  margin-top: 1rem;
+}
+
+.support-us-btn {
+  display: inline-block;
+  padding: 0.5rem 1.25rem;
+  background: linear-gradient(135deg, #635bff 0%, #0a2540 100%);
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.9rem;
+  text-decoration: none;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: opacity 0.2s, transform 0.1s;
+  box-shadow: 0 2px 8px rgba(99, 91, 255, 0.35);
+}
+
+.support-us-btn:hover {
+  opacity: 0.95;
+  transform: translateY(-1px);
+}
+
+[data-theme="light"] .support-us-btn {
+  background: linear-gradient(135deg, #635bff 0%, #0a2540 100%);
+  color: #fff;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   #app {

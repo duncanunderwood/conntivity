@@ -42,6 +42,19 @@ export function getTimezoneString() {
   }
 }
 
+/**
+ * Format IANA timezone (e.g. "Australia/Sydney") as "City / Country" for display.
+ */
+export function getTimezoneDisplayString() {
+  const tz = getTimezoneString();
+  if (!tz) return '';
+  const parts = tz.split('/');
+  if (parts.length < 2) return tz.replace(/_/g, ' ');
+  const region = parts[0].replace(/_/g, ' ');
+  const city = parts[parts.length - 1].replace(/_/g, ' ');
+  return `${city} / ${region}`;
+}
+
 const IPv4_REGEX = /^\d+\.\d+\.\d+\.\d+$/;
 const IPv6_REGEX = /^[0-9a-fA-F:]+$/;
 
@@ -54,6 +67,17 @@ function isIPv6(ip) {
 function isLoopback(ip) {
   if (ip === '::1' || ip.startsWith('127.') || ip === '0.0.0.0') return true;
   if (ip.toLowerCase() === '::1') return true;
+  return false;
+}
+
+/** RFC 1918 private IPv4: 10.x.x.x, 172.16.x.x–172.31.x.x, 192.168.x.x (LAN side of router). */
+function isPrivateIPv4(ip) {
+  if (!isIPv4(ip)) return false;
+  const parts = ip.split('.').map(Number);
+  if (parts.length !== 4) return false;
+  if (parts[0] === 10) return true;
+  if (parts[0] === 172 && parts[1] >= 16 && parts[1] <= 31) return true;
+  if (parts[0] === 192 && parts[1] === 168) return true;
   return false;
 }
 
@@ -88,13 +112,15 @@ export function getLocalIPs() {
 }
 
 /**
- * Get local ethernet IP, wifi IP, and a single local LAN IP (IPv4 or IPv6) for display.
- * localLANIP = this device's IP on the local network (LAN side of the router the client connects to).
+ * Get local ethernet IP, wifi IP, and a single local LAN IP for display.
+ * localLANIP = device's subnet address on the LAN (given by the router): 10.x.x.x, 172.16–31.x.x, or 192.168.x.x.
+ * subnetMask = not available in browser (would come from ipconfig); always null.
  */
 export async function getLocalEthernetAndWifiIPs() {
   const { ipv4, ipv6 } = await getLocalIPs();
   const all = [...ipv4, ...ipv6];
-  const localLANIP = ipv4[0] ?? ipv6[0] ?? null;
+  const privateV4 = ipv4.filter(isPrivateIPv4);
+  const localLANIP = privateV4[0] ?? ipv4[0] ?? ipv6[0] ?? null;
 
   const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
   const type = conn && conn.type !== undefined ? String(conn.type).toLowerCase() : null;
@@ -131,39 +157,33 @@ export async function getPublicIPAndInfo() {
       const i = line.indexOf('=');
       if (i > 0) map[line.slice(0, i).trim()] = line.slice(i + 1).trim();
     });
-    const { dns1, dns2 } = await getDnsResolvers();
-    return {
-      publicIP: map.ip || null,
-      dns1: dns1 || null,
-      dns2: dns2 || null,
-    };
+    const { dns1 } = await getDnsResolvers();
+    return { publicIP: map.ip || null, dns1: dns1 || null };
   } catch (_) {
     try {
       const res = await fetch(IPIFY_JSON + '&t=' + Date.now(), { cache: 'no-store' });
       const data = await res.json();
-      const { dns1, dns2 } = await getDnsResolvers();
-      return { publicIP: data.ip || null, dns1: dns1 || null, dns2: dns2 || null };
+      const { dns1 } = await getDnsResolvers();
+      return { publicIP: data.ip || null, dns1: dns1 || null };
     } catch (__) {
-      return { publicIP: null, dns1: null, dns2: null };
+      return { publicIP: null, dns1: null };
     }
   }
 }
 
 /**
- * Get DNS resolver IP(s) used by the browser (best-effort).
- * DNS 1 = the resolver that answered our request (user's primary DNS).
- * DNS 2 = not available from browser (OS backup DNS is not exposed); show "—" in UI.
+ * Get DNS resolver IP used by the browser (best-effort).
  */
 async function getDnsResolvers() {
   try {
     const res = await fetch('https://edns.ip-api.com/json?t=' + Date.now(), { cache: 'no-store' });
-    if (!res.ok) return { dns1: null, dns2: null };
+    if (!res.ok) return { dns1: null };
     const data = await res.json();
     const ip = data.dns?.ip;
     const dns1 = typeof ip === 'string' && /^\d+\.\d+\.\d+\.\d+$/.test(ip) ? ip : null;
-    return { dns1, dns2: null };
+    return { dns1 };
   } catch (_) {
-    return { dns1: null, dns2: null };
+    return { dns1: null };
   }
 }
 
