@@ -13,3 +13,6 @@ injectSpeedInsights();
 initUI();
 bindMonitor(monitor);
 initHeaderControls(monitor);
+
+const buildTsEl = document.getElementById('build-timestamp');
+if (buildTsEl && typeof __BUILD_TIMESTAMP__ !== 'undefined') buildTsEl.textContent = __BUILD_TIMESTAMP__;

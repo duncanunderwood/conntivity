@@ -418,6 +418,13 @@ body {
   margin-right: auto;
 }
 
+.app-footer-build {
+  margin-top: 1.25rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  opacity: 0.85;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   #app {
