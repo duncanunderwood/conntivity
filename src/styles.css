@@ -381,6 +381,25 @@ body {
   margin-bottom: 0;
 }
 
+/* Footer */
+.app-footer {
+  margin-top: 2.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--surface-border);
+  text-align: center;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.app-footer p {
+  margin: 0.25rem 0;
+}
+
+.app-footer-powered {
+  font-weight: 500;
+  color: var(--text);
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   #app {
