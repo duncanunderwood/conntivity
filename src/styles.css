@@ -223,7 +223,7 @@ body {
   color: var(--text-muted);
 }
 
-/* Speed test card */
+/* Speed test card — OpenSpeedtest embed */
 .speedtest-card {
   background: var(--surface);
   border: 1px solid var(--surface-border);
@@ -240,156 +240,25 @@ body {
   color: var(--text-muted);
 }
 
-.speedtest-container {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.speedtest-state {
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: var(--accent-cyan);
-  min-height: 1.5em;
-  transition: opacity 0.25s ease;
-}
-
-.speedtest-state:empty {
-  opacity: 0.6;
-}
-
-.speedtest-metrics {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
-.speedtest-metric {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-}
-
-.speedtest-metric-label {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.speedtest-metric-value {
-  font-family: var(--font-mono);
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: var(--text);
-  transition: color 0.2s ease;
-}
-
-.speedtest-bar-wrap {
-  height: 8px;
-  background: var(--control-bg);
-  border-radius: 999px;
+.speedtest-embed {
+  border-radius: var(--radius-sm);
   overflow: hidden;
 }
 
-.speedtest-bar {
-  height: 100%;
-  border-radius: 999px;
-  transition: width 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+.speedtest-credit {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  text-align: right;
 }
 
-.speedtest-bar-download {
-  background: linear-gradient(90deg, var(--accent-cyan), #06b6d4);
-  box-shadow: 0 0 12px rgba(34, 211, 238, 0.4);
-}
-
-.speedtest-bar-upload {
-  background: linear-gradient(90deg, var(--accent-green), #22c55e);
-  box-shadow: 0 0 12px rgba(74, 222, 128, 0.4);
-}
-
-.speedtest-bar.active {
-  animation: speedtest-bar-pulse 0.8s ease-in-out infinite;
-}
-
-@keyframes speedtest-bar-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.75; }
-}
-
-.speedtest-result {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.75rem 1.25rem;
-  padding: 1rem 1.25rem;
-  background: rgba(34, 211, 238, 0.08);
-  border: 1px solid rgba(34, 211, 238, 0.2);
-  border-radius: var(--radius-sm);
-  margin-top: 0.25rem;
-}
-
-.speedtest-result.hidden {
-  display: none;
-}
-
-.speedtest-result-label {
-  font-size: 0.8rem;
-  font-weight: 600;
+.speedtest-credit a {
   color: var(--accent-cyan);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  width: 100%;
-  margin-bottom: 0.25rem;
+  text-decoration: none;
 }
 
-.speedtest-result-download,
-.speedtest-result-upload {
-  font-size: 0.95rem;
-  color: var(--text);
-}
-
-.speedtest-result strong {
-  color: var(--accent-cyan);
-  font-family: var(--font-mono);
-}
-
-.speedtest-result-upload strong {
-  color: var(--accent-green);
-}
-
-.speedtest-btn {
-  align-self: flex-start;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 0.5rem 1.25rem;
-  background: linear-gradient(135deg, rgba(34, 211, 238, 0.2), rgba(74, 222, 128, 0.15));
-  border: 1px solid rgba(34, 211, 238, 0.35);
-  border-radius: var(--radius-sm);
-  color: var(--accent-cyan);
-  cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.2s ease;
-}
-
-.speedtest-btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 20px rgba(34, 211, 238, 0.25);
-}
-
-.speedtest-btn:active:not(:disabled) {
-  transform: translateY(0);
-}
-
-.speedtest-btn:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
-
-.speedtest-btn:focus {
-  outline: none;
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 0 2px rgba(34, 211, 238, 0.25);
+.speedtest-credit a:hover {
+  text-decoration: underline;
 }
 
 /* Status card — glass panel + status light */
