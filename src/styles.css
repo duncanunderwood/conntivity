@@ -400,6 +400,15 @@ body {
   color: var(--text);
 }
 
+.app-footer-link {
+  color: var(--accent-cyan);
+  text-decoration: none;
+}
+
+.app-footer-link:hover {
+  text-decoration: underline;
+}
+
 /* Responsive */
 @media (max-width: 480px) {
   #app {
