@@ -89,7 +89,7 @@ export function getLocalIPs() {
 
 /**
  * Get local ethernet IP, wifi IP, and a single local LAN IP (IPv4 or IPv6) for display.
- * Local LAN IP shows the machine's primary local address (prefer IPv4, else IPv6).
+ * localLANIP = this device's IP on the local network (LAN side of the router the client connects to).
  */
 export async function getLocalEthernetAndWifiIPs() {
   const { ipv4, ipv6 } = await getLocalIPs();
@@ -118,7 +118,8 @@ export async function getLocalEthernetAndWifiIPs() {
 }
 
 /**
- * Get public IP and optional extra info (e.g. from Cloudflare trace).
+ * Get public IP (WAN side of router) and DNS resolver(s).
+ * Public IP = the router's IP as seen from the internet.
  */
 export async function getPublicIPAndInfo() {
   try {
@@ -130,37 +131,39 @@ export async function getPublicIPAndInfo() {
       const i = line.indexOf('=');
       if (i > 0) map[line.slice(0, i).trim()] = line.slice(i + 1).trim();
     });
-    const resolverIP = await getResolverIP();
+    const { dns1, dns2 } = await getDnsResolvers();
     return {
       publicIP: map.ip || null,
-      resolverIP: resolverIP || null,
-      gateway: null,
+      dns1: dns1 || null,
+      dns2: dns2 || null,
     };
   } catch (_) {
     try {
       const res = await fetch(IPIFY_JSON + '&t=' + Date.now(), { cache: 'no-store' });
       const data = await res.json();
-      const resolverIP = await getResolverIP();
-      return { publicIP: data.ip || null, resolverIP: resolverIP || null, gateway: null };
+      const { dns1, dns2 } = await getDnsResolvers();
+      return { publicIP: data.ip || null, dns1: dns1 || null, dns2: dns2 || null };
     } catch (__) {
-      return { publicIP: null, resolverIP: null, gateway: null };
+      return { publicIP: null, dns1: null, dns2: null };
     }
   }
 }
 
 /**
- * Try to get the DNS resolver IP (best-effort; many environments don't expose this via CORS APIs).
+ * Get DNS resolver IP(s) used by the browser (best-effort).
+ * DNS 1 = the resolver that answered our request (user's primary DNS).
+ * DNS 2 = not available from browser (OS backup DNS is not exposed); show "—" in UI.
  */
-async function getResolverIP() {
+async function getDnsResolvers() {
   try {
-    const res = await fetch('https://edns.ip-api.com/json', { cache: 'no-store' });
-    if (!res.ok) return null;
+    const res = await fetch('https://edns.ip-api.com/json?t=' + Date.now(), { cache: 'no-store' });
+    if (!res.ok) return { dns1: null, dns2: null };
     const data = await res.json();
     const ip = data.dns?.ip;
-    if (typeof ip === 'string' && /^\d+\.\d+\.\d+\.\d+$/.test(ip)) return ip;
-    return null;
+    const dns1 = typeof ip === 'string' && /^\d+\.\d+\.\d+\.\d+$/.test(ip) ? ip : null;
+    return { dns1, dns2: null };
   } catch (_) {
-    return null;
+    return { dns1: null, dns2: null };
   }
 }
 

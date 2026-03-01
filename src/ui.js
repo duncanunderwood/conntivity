@@ -23,7 +23,8 @@ const diagnosticsTips = document.getElementById('diagnostics-tips');
 const dashboardTime = document.getElementById('dashboard-time');
 const dashboardLocalLanIP = document.getElementById('dashboard-local-lan-ip');
 const dashboardPublicIP = document.getElementById('dashboard-public-ip');
-const dashboardDnsIP = document.getElementById('dashboard-dns-ip');
+const dashboardDns1 = document.getElementById('dashboard-dns1');
+const dashboardDns2 = document.getElementById('dashboard-dns2');
 
 let lastConnectedAt = null;
 let lastMonitorUpdateAt = 0;
@@ -105,7 +106,8 @@ const DEFAULT_DISCONNECTED_TIPS = [
 function setAllIPsToDash() {
   if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = '—';
   if (dashboardPublicIP) dashboardPublicIP.textContent = '—';
-  if (dashboardDnsIP) dashboardDnsIP.textContent = '—';
+  if (dashboardDns1) dashboardDns1.textContent = '—';
+  if (dashboardDns2) dashboardDns2.textContent = '—';
 }
 
 async function refreshDashboardIPs() {
@@ -113,7 +115,8 @@ async function refreshDashboardIPs() {
   const info = await getPublicIPAndInfo();
   if (dashboardLocalLanIP) dashboardLocalLanIP.textContent = localLANIP || '—';
   if (dashboardPublicIP) dashboardPublicIP.textContent = info.publicIP || '—';
-  if (dashboardDnsIP) dashboardDnsIP.textContent = info.resolverIP || '—';
+  if (dashboardDns1) dashboardDns1.textContent = info.dns1 || '—';
+  if (dashboardDns2) dashboardDns2.textContent = info.dns2 || '—';
 }
 
 async function runAndShowDiagnostics() {
@@ -173,7 +176,8 @@ async function initDashboard() {
 
   const info = await getPublicIPAndInfo();
   if (dashboardPublicIP) dashboardPublicIP.textContent = info.publicIP || '—';
-  if (dashboardDnsIP) dashboardDnsIP.textContent = info.resolverIP || '—';
+  if (dashboardDns1) dashboardDns1.textContent = info.dns1 || '—';
+  if (dashboardDns2) dashboardDns2.textContent = info.dns2 || '—';
 }
 
 const THEME_KEY = 'conntivity-theme';
