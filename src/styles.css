@@ -395,20 +395,6 @@ body {
   margin: 0.25rem 0;
 }
 
-.app-footer-powered {
-  font-weight: 500;
-  color: var(--text);
-}
-
-.app-footer-link {
-  color: var(--accent-cyan);
-  text-decoration: none;
-}
-
-.app-footer-link:hover {
-  text-decoration: underline;
-}
-
 .app-footer-support {
   margin-top: 1rem;
 }
