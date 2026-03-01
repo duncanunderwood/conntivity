@@ -8,6 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="/src/styles.css" />
+    <script async src="https://js.stripe.com/v3/buy-button.js"></script>
   </head>
   <body data-theme="dark">
     <div id="app">
@@ -70,7 +71,11 @@
         <p class="app-footer-copyright">© 2025 MyEvent Productions. All rights reserved.</p>
         <p class="app-footer-powered">Powered by <a href="https://myevent.io" target="_blank" rel="noopener noreferrer" class="app-footer-link">MyEvent Productions</a></p>
         <p class="app-footer-support">
-          <a href="#" id="support-us-btn" class="support-us-btn" target="_blank" rel="noopener noreferrer" title="Support us via Stripe">Support us</a>
+          <stripe-buy-button
+            buy-button-id="buy_btn_1T61T4S1kqR8qSENM8ml2akY"
+            publishable-key="pk_live_51OgaKrS1kqR8qSENtn5WEzeoSJEV4W4woAlULzStL5FZAQICFBArONLE63O0qRSeGMCshCydmGw2YEHMD7HxFnH300z3vORTuo"
+          >
+          </stripe-buy-button>
         </p>
       </footer>
     </div>
