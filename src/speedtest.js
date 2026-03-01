@@ -1,11 +1,13 @@
 /**
  * Client-side speed test: download then upload, results in Mbps.
- * Uses public endpoints (OVH file, httpbin) for measurement.
+ * Uses same-origin payload files and API when available; falls back to external endpoints.
  */
 
-const DOWNLOAD_URL = 'https://proof.ovh.net/files/10Mb.dat';
-const UPLOAD_URL = 'https://httpbin.org/post';
+const DOWNLOAD_PAYLOAD_PATH = '/speedtest/5mb.bin';
+const UPLOAD_API_PATH = '/api/speedtest-upload';
+const UPLOAD_FALLBACK_URL = 'https://httpbin.org/post';
 const UPLOAD_SIZE_BYTES = 1 * 1024 * 1024; // 1 MB for upload test
+const DOWNLOAD_PAYLOAD_SIZE = 5 * 1024 * 1024; // 5 MB for progress
 
 const stateEl = document.getElementById('speedtest-state');
 const downloadValEl = document.getElementById('speedtest-download');
@@ -60,14 +62,15 @@ function setRunning(running) {
 }
 
 /**
- * Run download test: fetch stream, count bytes, measure time.
+ * Run download test: fetch same-origin payload, stream and count bytes.
  */
 async function runDownloadTest() {
   const start = performance.now();
   let bytes = 0;
   const cacheBust = '?t=' + Date.now();
+  const url = DOWNLOAD_PAYLOAD_PATH + cacheBust;
 
-  const res = await fetch(DOWNLOAD_URL + cacheBust, { cache: 'no-store' });
+  const res = await fetch(url, { cache: 'no-store' });
   if (!res.ok || !res.body) throw new Error('Download failed');
 
   const reader = res.body.getReader();
@@ -82,7 +85,7 @@ async function runDownloadTest() {
     if (now - lastReport >= reportInterval) {
       const elapsedSec = (now - start) / 1000;
       const mbps = (bytes * 8) / 1e6 / elapsedSec;
-      setDownloadMbps(mbps, Math.min(1, bytes / (10 * 1024 * 1024))); // 10MB cap for progress
+      setDownloadMbps(mbps, Math.min(1, bytes / DOWNLOAD_PAYLOAD_SIZE));
       lastReport = now;
     }
   }
@@ -94,25 +97,32 @@ async function runDownloadTest() {
 }
 
 /**
- * Run upload test: POST a 1MB blob to httpbin, measure time.
+ * Run upload test: POST a 1MB blob. Tries same-origin API first, then httpbin fallback.
  */
 async function runUploadTest() {
   const blob = new Blob([new Uint8Array(UPLOAD_SIZE_BYTES)]);
-  const start = performance.now();
+  const urls = [UPLOAD_API_PATH, UPLOAD_FALLBACK_URL];
+  let lastError;
 
-  const res = await fetch(UPLOAD_URL, {
-    method: 'POST',
-    body: blob,
-    mode: 'cors',
-    headers: { 'Content-Type': 'application/octet-stream' },
-  });
-
-  const elapsedSec = (performance.now() - start) / 1000;
-  if (!res.ok) throw new Error('Upload failed');
-
-  const mbps = (UPLOAD_SIZE_BYTES * 8) / 1e6 / elapsedSec;
-  setUploadMbps(mbps, 1);
-  return mbps;
+  for (const url of urls) {
+    const start = performance.now();
+    try {
+      const res = await fetch(url, {
+        method: 'POST',
+        body: blob,
+        mode: 'cors',
+        headers: { 'Content-Type': 'application/octet-stream' },
+      });
+      const elapsedSec = (performance.now() - start) / 1000;
+      if (!res.ok) throw new Error('Upload failed');
+      const mbps = (UPLOAD_SIZE_BYTES * 8) / 1e6 / elapsedSec;
+      setUploadMbps(mbps, 1);
+      return mbps;
+    } catch (e) {
+      lastError = e;
+    }
+  }
+  throw lastError;
 }
 
 /**
