@@ -8,8 +8,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Outfit:wght@400;500;600&display=swap" rel="stylesheet" />
     <script async src="https://js.stripe.com/v3/buy-button.js"></script>
-    <script type="module" crossorigin src="/assets/index-J5ZKgwfB.js"></script>
-    <link rel="stylesheet" crossorigin href="/assets/index-CZ8h0gjx.css">
+    <script type="module" crossorigin src="/assets/index-C7kBE63S.js"></script>
+    <link rel="stylesheet" crossorigin href="/assets/index-DJ9RGrma.css">
   </head>
   <body data-theme="dark">
     <div id="app">
@@ -47,6 +47,31 @@
             </dl>
           </section>
         </div>
+
+        <section class="speedtest-card" aria-label="Network speed test">
+          <h2 class="speedtest-title">Speed test</h2>
+          <div id="speedtest-container" class="speedtest-container">
+            <div id="speedtest-state" class="speedtest-state">Ready</div>
+            <div class="speedtest-metrics">
+              <div class="speedtest-metric">
+                <span class="speedtest-metric-label">Download</span>
+                <span id="speedtest-download" class="speedtest-metric-value">— Mbps</span>
+                <div class="speedtest-bar-wrap">
+                  <div id="speedtest-download-bar" class="speedtest-bar speedtest-bar-download" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="speedtest-metric">
+                <span class="speedtest-metric-label">Upload</span>
+                <span id="speedtest-upload" class="speedtest-metric-value">— Mbps</span>
+                <div class="speedtest-bar-wrap">
+                  <div id="speedtest-upload-bar" class="speedtest-bar speedtest-bar-upload" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+            <div id="speedtest-result" class="speedtest-result hidden"></div>
+            <button type="button" id="speedtest-btn" class="speedtest-btn">Run speed test</button>
+          </div>
+        </section>
 
         <section class="status-card" aria-live="polite" aria-atomic="true">
           <div class="status-light-wrapper">

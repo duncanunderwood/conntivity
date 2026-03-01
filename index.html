@@ -47,6 +47,31 @@
           </section>
         </div>
 
+        <section class="speedtest-card" aria-label="Network speed test">
+          <h2 class="speedtest-title">Speed test</h2>
+          <div id="speedtest-container" class="speedtest-container">
+            <div id="speedtest-state" class="speedtest-state">Ready</div>
+            <div class="speedtest-metrics">
+              <div class="speedtest-metric">
+                <span class="speedtest-metric-label">Download</span>
+                <span id="speedtest-download" class="speedtest-metric-value">— Mbps</span>
+                <div class="speedtest-bar-wrap">
+                  <div id="speedtest-download-bar" class="speedtest-bar speedtest-bar-download" style="width: 0%"></div>
+                </div>
+              </div>
+              <div class="speedtest-metric">
+                <span class="speedtest-metric-label">Upload</span>
+                <span id="speedtest-upload" class="speedtest-metric-value">— Mbps</span>
+                <div class="speedtest-bar-wrap">
+                  <div id="speedtest-upload-bar" class="speedtest-bar speedtest-bar-upload" style="width: 0%"></div>
+                </div>
+              </div>
+            </div>
+            <div id="speedtest-result" class="speedtest-result hidden"></div>
+            <button type="button" id="speedtest-btn" class="speedtest-btn">Run speed test</button>
+          </div>
+        </section>
+
         <section class="status-card" aria-live="polite" aria-atomic="true">
           <div class="status-light-wrapper">
             <div id="status-light" class="status-light status-unknown" role="status" aria-label="Connection status"></div>

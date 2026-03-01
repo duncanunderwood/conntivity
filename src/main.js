@@ -6,11 +6,13 @@ import { inject } from '@vercel/analytics';
 import { injectSpeedInsights } from '@vercel/speed-insights';
 import * as monitor from './monitor.js';
 import { initUI, bindMonitor, initHeaderControls } from './ui.js';
+import { initSpeedTest } from './speedtest.js';
 
 inject();
 injectSpeedInsights();
 
 initUI();
+initSpeedTest();
 bindMonitor(monitor);
 initHeaderControls(monitor);
 
